@@ -1,0 +1,32 @@
+//Cg
+/* Generated shader for render state 0A05A6CC:
+  AlphaTestAttrib:greater,0
+  ShaderAttrib
+  TextureAttrib:on default:cloud_atlas
+  TransparencyAttrib:alpha
+*/
+void vshader(
+	 in float4 vtx_texcoord0 : TEXCOORD0,
+     in uniform float4 offset,
+	 out float4 l_texcoord0 : TEXCOORD0,
+	 float4 vtx_position : POSITION,
+	 out float4 l_position : POSITION,     
+	 uniform float4x4 mat_modelproj
+) {
+	 l_position = mul(mat_modelproj, vtx_position);
+	 l_texcoord0 = vtx_texcoord0+offset;
+}
+
+void fshader(
+     in uniform float time,     
+     in uniform float4 uv,
+	 uniform sampler2D tex_0,
+	 in float4 l_texcoord0 : TEXCOORD0,
+	 out float4 o_color : COLOR0,
+     uniform float4 attr_colorscale
+) {
+	 // Fetch all textures.
+	 float4 tex0 = tex2D(tex_0, l_texcoord0.xy+uv.xy);
+     float4 tex1 = tex2D(tex_0, l_texcoord0.xy+uv.zw);	 
+	 o_color = float4(1.0,1.0, 1.0, lerp(tex0.a, tex1.a, time))*attr_colorscale;
+}
