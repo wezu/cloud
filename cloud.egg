@@ -1,0 +1,54 @@
+<CoordinateSystem> { Z-Up }
+
+<Texture> Tex1 {
+  cloud_atlas.png
+  <Scalar> format { rgba }
+  <Scalar> wrapu { repeat }
+  <Scalar> wrapv { repeat }
+  <Scalar> minfilter { linear_mipmap_linear }
+  <Scalar> magfilter { linear }
+  <Scalar> envtype { modulate }
+  <Scalar> alpha { dual }
+}
+<Group> Plane001 {
+  <Transform> {
+    <Matrix4> {
+      1 0 0 0
+      0 -4.37114e-008 1 0
+      0 -1 -4.37114e-008 0
+      0 0 0 1
+    }
+  }
+  <VertexPool> Plane001.verts {
+    <Vertex> 0 {
+      -10 -2.18557e-007 5
+      <UV> { 0 1 }
+      <Normal> { 0 -1 -4.37114e-008 }
+    }
+    <Vertex> 1 {
+      -10 2.18557e-007 -5
+      <UV> { 0 0.875 }
+      <Normal> { 0 -1 -4.37114e-008 }
+    }
+    <Vertex> 2 {
+      10 -2.18557e-007 5
+      <UV> { 0.25 1 }
+      <Normal> { 0 -1 -4.37114e-008 }
+    }
+    <Vertex> 3 {
+      10 2.18557e-007 -5
+      <UV> { 0.25 0.875 }
+      <Normal> { 0 -1 -4.37114e-008 }
+    }
+  }
+  <Polygon> {
+    <RGBA> { 1 1 1 1 }
+    <TRef> { Tex1 }
+    <VertexRef> { 0 1 2 <Ref> { Plane001.verts } }
+  }
+  <Polygon> {
+    <RGBA> { 1 1 1 1 }
+    <TRef> { Tex1 }
+    <VertexRef> { 3 2 1 <Ref> { Plane001.verts } }
+  }
+}
