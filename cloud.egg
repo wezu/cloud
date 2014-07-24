@@ -24,30 +24,32 @@
       -10 -2.18557e-007 5
       <UV> { 0 1 }
       <Normal> { 0 -1 -4.37114e-008 }
+      <RGBA> { 1 1 1 1 }
     }
     <Vertex> 1 {
       -10 2.18557e-007 -5
       <UV> { 0 0.875 }
       <Normal> { 0 -1 -4.37114e-008 }
+      <RGBA> { 0 0 0 1 }
     }
     <Vertex> 2 {
       10 -2.18557e-007 5
       <UV> { 0.25 1 }
       <Normal> { 0 -1 -4.37114e-008 }
+      <RGBA> { 1 1 1 1 }
     }
     <Vertex> 3 {
       10 2.18557e-007 -5
       <UV> { 0.25 0.875 }
       <Normal> { 0 -1 -4.37114e-008 }
+      <RGBA> { 0 0 0 1 }
     }
   }
-  <Polygon> {
-    <RGBA> { 1 1 1 1 }
+  <Polygon> {    
     <TRef> { Tex1 }
     <VertexRef> { 0 1 2 <Ref> { Plane001.verts } }
   }
-  <Polygon> {
-    <RGBA> { 1 1 1 1 }
+  <Polygon> {    
     <TRef> { Tex1 }
     <VertexRef> { 3 2 1 <Ref> { Plane001.verts } }
   }

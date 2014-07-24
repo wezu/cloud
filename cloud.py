@@ -11,9 +11,9 @@ class World(DirectObject):
         cloud = NodePath(cloud_lod)
         lod0 = loader.loadModel("cloud")
         lod0.reparentTo(cloud)
-        cloud_lod.addSwitch(600, 0)
+        cloud_lod.addSwitch(1000, 0)
         shader = loader.loadShader("clouds.cg")
-        cloud_lod.setFadeTime(10.0)
+        cloud_lod.setFadeTime(5.0)
         self.sky=loader.loadModel("sky")
         self.sky.reparentTo(self.cloud_root)
         self.sky.setBin('background', 1)
@@ -21,24 +21,31 @@ class World(DirectObject):
         self.sky.setLightOff()
         self.sky.setScale(100)
         
+        
         #config here!            
-        self.cloud_x=1200
-        self.cloud_y=1200
-        self.cloud_z=30        
-        self.cloud_speed=0.5
-        cloud_size=5
-        cloud_count=50
-        cloud_color=(.9,.9,1, 1.0)
+        self.cloud_x=2000
+        self.cloud_y=2000
+        self.cloud_z=100        
+        self.cloud_speed=0.3
+        cloud_size=20
+        cloud_count=20
+        cloud_color=(0.6,0.6,0.65, 1.0)
         self.clouds=[]
         
         for i in range(cloud_count):
             self.clouds.append(cloud.copyTo(self.cloud_root))    
-            self.clouds[-1].setPos(render,random.randrange(-self.cloud_x/2, self.cloud_x/2),random.randrange(-self.cloud_y/2,self.cloud_y/2), random.randrange(self.cloud_z)+self.cloud_z)
-            self.clouds[-1].setScale(cloud_size+random.random(),cloud_size+random.random(),cloud_size+random.random())
+            self.clouds[-1].getChild(0).getChild(0).setScale(cloud_size+random.random(),cloud_size+random.random(),cloud_size+random.random())
+            self.clouds[-1].setPos(render,random.randrange(-self.cloud_x/2, self.cloud_x/2),random.randrange(-self.cloud_y/2,self.cloud_y/2), random.randrange(self.cloud_z)+self.cloud_z)            
             self.clouds[-1].setShaderInput("offset", Vec4(random.randrange(5)*0.25, random.randrange(9)*0.125, 0, 0))
             self.clouds[-1].setShader(shader)
             self.clouds[-1].setBillboardPointEye()
-            self.clouds[-1].setColor(cloud_color)
+            #self.clouds[-1].setColor(cloud_color)
+            self.clouds[-1].setDepthWrite(0)
+            self.clouds[-1].setDepthTest(0)
+            self.clouds[-1].setBin("fixed", 0)
+            
+        self.cloud_root.setColor(cloud_color)    
+        self.sky.setColor(1,1,1,1)
         
         self.time=0
         self.uv=Vec4(0, 0, 0.25, 0)        
@@ -47,10 +54,10 @@ class World(DirectObject):
         taskMgr.add(self.update,"updateTask")
         
     def update(self, task): 
-        self.cloud_root.setPos(base.camera.getPos(render))   
+        self.cloud_root.setPos(base.camera.getPos(render))
         elapsed = task.time*self.cloud_speed
         for model in self.clouds:
-            model.setY(model, -task.time)
+            model.setY(model, -task.time*10.0)
             if model.getY(self.cloud_root) <-self.cloud_y/2:
                 model.setY(self.cloud_root,self.cloud_y/2)
         self.time+=elapsed
