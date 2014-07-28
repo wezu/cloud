@@ -1,45 +1,37 @@
 //Cg
 void vshader(
       in float4 vtx_texcoord0 : TEXCOORD0,
-      in float4 vtx_position : POSITION,
-
-      uniform float4x4 mat_modelproj,
-      uniform float4x4 trans_model_to_world,        
-      uniform float4x4 texmat_0,
+      in float4 vtx_position : POSITION,   
       in uniform float offset,
       
-      out float4 l_worldPos : TEXCOORD1,
+      uniform float4x4 mat_modelproj,
+      uniform float4x4 trans_model_to_world,        
+      uniform float4x4 texmat_0,            
+      
       out float4 l_position : POSITION,
       out float4 l_texcoord0 : TEXCOORD0,
-      out float4 l_texcoord3 : TEXCOORD3,
-      out float4 l_texCoordReflec: TEXCOORD2
-) {
-   l_worldPos = mul(trans_model_to_world, vtx_position);
+      out float4 l_texcoord1 : TEXCOORD1,
+      out float4 l_texCoordReflec: TEXCOORD2)
+   {
+   float4 l_worldPos = mul(trans_model_to_world, vtx_position);
    l_position = mul(mat_modelproj, vtx_position);
    l_texcoord0 = vtx_texcoord0*20.0+offset*0.01;
-   l_texcoord3 = vtx_texcoord0*20.0-offset*0.01;
+   l_texcoord1 = vtx_texcoord0*20.0-offset*0.01;
    l_texCoordReflec = mul(texmat_0, l_worldPos);
 }
 
 void fshader(
-      in float4 l_worldPos : TEXCOORD1,
       in float4 l_texcoord0 : TEXCOORD0,
-      in float4 l_texcoord3 : TEXCOORD3,
+      in float4 l_texcoord1 : TEXCOORD1,
       in float4 l_texCoordReflec: TEXCOORD2,
       
       uniform sampler2D tex_0 : TEXUNIT0,
-      uniform sampler2D water_norm,
-      uniform sampler2D water_color,
-      
-      out float4 o_color : COLOR0
-) {   
-   float4 distortion1 = normalize(tex2D(water_norm, l_texcoord0.xy))*5;
-   float4 distortion2 = normalize(tex2D(water_norm, l_texcoord3.xy))*5;
-   //float4 color=lerp(tex2D(water_color, l_texcoord0.xy),tex2D(water_color, l_texcoord3.xy),0.5);  
-   float4 color=tex2D(water_color, l_texcoord0.xy)+tex2D(water_color, l_texcoord3.xy);      
-   //o_color=distortion1+distortion2;
-   //o_color=tex2D(water_color, l_texcoord0.xy);
-   //o_color =tex2Dproj(tex_0, l_texCoordReflec+distortion);
-   o_color =lerp(tex2Dproj(tex_0, l_texCoordReflec+distortion1*distortion2),color,0.05);
-   //o_color =tex2Dproj(tex_0, l_texCoordReflec+distortion1+distortion2);
+      uniform sampler2D water_norm,     
+     
+      out float4 o_color : COLOR0)
+  {   
+   float4 distortion1 = normalize(tex2D(water_norm, l_texcoord0.xy));
+   float4 distortion2 = normalize(tex2D(water_norm, l_texcoord1.xy));
+   o_color =tex2Dproj(tex_0, l_texCoordReflec+distortion1*distortion2*25);
+
 }

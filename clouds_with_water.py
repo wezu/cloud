@@ -21,7 +21,13 @@ class World(DirectObject):
         self.sky.setDepthWrite(0)
         self.sky.setLightOff()
         self.sky.setScale(100)
-        
+        self.sun=loader.loadModel("sun")
+        self.sun.reparentTo(self.cloud_root)
+        self.sun.setBin('background', 1)
+        self.sun.setDepthWrite(0)
+        self.sun.setLightOff()
+        self.sun.setScale(100)
+        self.sun.setP(20)
         
         #config here!            
         self.cloud_x=2000
@@ -30,7 +36,7 @@ class World(DirectObject):
         self.cloud_speed=0.3
         cloud_size=20
         cloud_count=20
-        cloud_color=(0.6,0.6,0.65, 1.0)
+        cloud_color=(0.6,0.6,0.7, 1.0)
         self.clouds=[]
         
         for i in range(cloud_count):
@@ -40,13 +46,15 @@ class World(DirectObject):
             self.clouds[-1].setShaderInput("offset", Vec4(random.randrange(5)*0.25, random.randrange(9)*0.125, 0, 0))
             self.clouds[-1].setShader(shader)
             self.clouds[-1].setBillboardPointEye()
-            #self.clouds[-1].setColor(cloud_color)
+            self.clouds[-1].setColor(cloud_color)
             self.clouds[-1].setDepthWrite(0)
             self.clouds[-1].setDepthTest(0)
-            self.clouds[-1].setBin("fixed", 0)
+            #self.clouds[-1].setBin("fixed", 0)
+            self.clouds[-1].setBin('background', 1)
             
         self.cloud_root.setColor(cloud_color)    
         self.sky.setColor(1,1,1,1)
+        self.sun.setColor(1,1,1,1)
         
         self.time=0
         self.uv=Vec4(0, 0, 0.25, 0)        
@@ -94,16 +102,28 @@ class World(DirectObject):
         self.wCamera.node().setInitialState(tmpNP.getState())
         self.waterNP.projectTexture(TextureStage("reflection"), wTexture, self.wCamera)
 
-        self.waterNP.setShader(loader.loadShader("water.cg"))
-        self.waterNP.setShaderInput("water_norm", loader.loadTexture('water-normal.jpg'))         
-        self.waterNP.setShaderInput("water_color", loader.loadTexture('water.jpg')) 
+        self.waterNP.setShader(loader.loadShader("water2.cg"))
+        self.waterNP.setShaderInput("water_norm", loader.loadTexture('water-normal.jpg'))  
+        self.waterNP.setShaderInput("water_alpha", loader.loadTexture('water_alpha.png'))
+        self.waterNP.setTransparency(TransparencyAttrib.MDual)
         self.offset=0.0
+        
+        #light
+        dlight = DirectionalLight('dlight') 
+        dlight.setColor(VBase4(1, 1, 0.5, 1))        
+        dlnp = render.attachNewNode(dlight)
+        dlnp.setHpr(0, 180+20, 0)         
+        render.setShaderInput("dlight0", dlnp)
+        render.setLight(dlnp)
+        
+        smiley=loader.loadModel("smiley")
+        smiley.reparentTo(render)
+        smiley.setScale(10)
         
     def update(self, task):         
         self.time+=task.time*self.cloud_speed
         self.offset+=task.time
         #water
-        #print self.time
         self.wCamera.setMat(base.cam.getMat(render)*self.wPlane.getReflectionMat())         
         render.setShaderInput("offset", self.offset)         
         #clouds
