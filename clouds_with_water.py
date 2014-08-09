@@ -1,5 +1,6 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
+from direct.actor.Actor import Actor
 import direct.directbase.DirectStart
 import random
 
@@ -78,7 +79,7 @@ class World(DirectObject):
         self.waterNP.setLightOff(1)
        
         #Add a buffer and camera that will render the reflection texture
-        wBuffer = base.win.makeTextureBuffer("water", 256, 256)
+        wBuffer = base.win.makeTextureBuffer("water", 512, 512)
         wBuffer.setClearColorActive(True)
         wBuffer.setClearColor(base.win.getClearColor())
         self.wCamera = base.makeCamera(wBuffer)
@@ -116,9 +117,13 @@ class World(DirectObject):
         render.setShaderInput("dlight0", dlnp)
         render.setLight(dlnp)
         
-        smiley=loader.loadModel("smiley")
-        smiley.reparentTo(render)
-        smiley.setScale(10)
+        
+        self.pandaActor = Actor("models/panda-model",
+                                {"walk": "models/panda-walk4"})
+        self.pandaActor.setZ(-25)
+        self.pandaActor.setScale(0.1)
+        self.pandaActor.reparentTo(render)        
+        self.pandaActor.loop("walk")
         
     def update(self, task):         
         self.time+=task.time*self.cloud_speed

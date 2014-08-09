@@ -47,7 +47,7 @@ void fshader(
    
    float alpha=tex2D(water_alpha, l_texcoord0.xy).r+tex2D(water_alpha, l_texcoord1.xy).r;
    
-   float facing = max(dot(normalize(-l_eye_position.xyz), normalize(l_eye_normal.xyz)), 0);
+   float facing = 1.0- max(dot(normalize(-l_eye_position.xyz), normalize(l_eye_normal.xyz)), 0);
    
    float4 normalmap=distortion1+distortion2;   
    float3 tsnormal = (normalmap.xyz * 2) - 1;
@@ -63,6 +63,6 @@ void fshader(
    float factor=0.1;   
    float4 specular = pow(saturate(dot(l_eye_normal.xyz, lhalf.xyz)), shine)*lcolor*lspec;
    
-   o_color =lerp(tex2Dproj(tex_0, l_texCoordReflec+distortion1*distortion2*25),specular, factor); 
-   o_color.a=alpha+(facing*0.25);
+   o_color =lerp(tex2Dproj(tex_0, l_texCoordReflec+distortion1*distortion2*10),specular, factor); 
+   o_color.a=alpha+(facing*0.4)-0.1;
 }
